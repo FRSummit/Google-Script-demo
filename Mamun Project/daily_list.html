@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test Read</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<style>
+			.create-new-btn-section {
+				width: 25%;
+				text-align: center;
+				display: inline-block;
+			}
+			.create-new-btn {
+				background: #d0c7c7;
+				padding: 10px 40px;
+				border-radius: 4px;
+				border: 2px solid #777fce;
+				cursor: pointer;
+				font-weight: bold;
+				font-family: sans-serif;
+			}
+			table {
+				font-family: arial, sans-serif;
+				border-collapse: collapse;
+				width: 100%;
+				margin: 0 auto;
+				background: #dfe2e2;
+				border-radius: 14px;
+				border: 2px solid #7d5757;
+			}
+			#testTable2 {
+				border-bottom: 0;
+			}
+			th, td {
+				width: 25%;
+				text-align: center;
+				padding: 2px;
+			}
+			tr:nth-child(11n), #demo tr:nth-child(10){
+				display: none;
+			}
+			tr:nth-child(11n-10){
+				background: #c5b5b5;
+				font-weight: bold;
+			}
+			tr:nth-child(11n-2) td:nth-child(2), tr:nth-child(11n-2) td:nth-child(3) {
+				background: #a57474;
+			}
+			tr:nth-child(11n-2) {
+				color: #3f3f40;
+				font-size: 20px;
+			}
+			tr:nth-child(11n-2), 
+			tr:nth-child(11n-3) {
+				background: #bb9e9e;
+				font-weight: bold;
+			}
+			.sheet-link {
+				border: 2px solid #9a9696;
+				background: #d0c7c7;
+				padding: 10px 20px;
+				width: 20%;
+				text-align: center;
+				margin-bottom: 10px;
+				display: inline-block;
+				float: right;
+				border-radius: 4px;
+				font-weight: bold;
+				font-family: sans-serif;
+				cursor: pointer;
+				color: #222;
+				text-decoration: none;
+			}
+			.all-data p, .last-entry p {
+				font-family: sans-serif;
+				font-size: 24px;
+				font-weight: bold;
+				text-align: center;
+				border: 2px solid;
+				width: 25%;
+				margin: 0 auto;
+				background: azure;
+				margin-bottom: 2px;
+			}
+		</style>
+    </head>
+    <body>
+        <div class="container text-center my-4">
+			<div class="create-new-btn-section">
+				<div class="create-new-btn" role="button" onclick="read_value()">Create New</div>
+			</div>
+            <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1lIKO_bHQ0W9Lls-SwjQhBCU0bGBLkP_azc3tOCTS_Io/edit#gid=0" role="button" target="_blank">View Spreadsheet</a>
+            <div class="last-entry">
+				<p>Last Entry</p>
+				<table id="testTable">
+					<thead>
+						<tr style="background: #a7a3a3;">
+							<th>Vehicle No</th>
+							<th>Income</th>
+							<th>Remark</th>
+							<th>Expendature</th>
+						</tr>
+					</thead>
+					<tbody id="demo">
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="all-data" style="margin-top: 5%;">
+				<p>All data</p>
+				<table id="testTable2">
+					<thead>
+						<tr style="background: #a7a3a3;">
+							<th>Vehicle No</th>
+							<th>Income</th>
+							<th>Remark</th>
+							<th>Expendature</th>
+						</tr>
+					</thead>
+					<tbody id="demo-all">
+					</tbody>
+				</table>
+			</div>
+        </div>
+        
+        <script>
+            $(document).ready(function(){
+			//$('tr:nth-child(11n-2) td:nth-child(1)');
+				//https://docs.google.com/spreadsheets/d/e/2PACX-1vRT8IMifm7ysgCxdCWXq-9gape4fLiw4hPuk8i23-08Gz0kmqz0kH6Vk77ilw8XG2eY2x3wBhWRcMA8/pubhtml
+                $.getJSON("https://spreadsheets.google.com/feeds/list/1lIKO_bHQ0W9Lls-SwjQhBCU0bGBLkP_azc3tOCTS_Io/1/public/values?alt=json", function (data) {
+                    var sheetData = data.feed.entry;
+                    var i;
+					//All data
+                    for (i = 1; i < sheetData.length; i++) {
+						if(i%10==0){
+							document.getElementById('demo-all').innerHTML += ('<tr><td style="border-top: 2px solid; padding: 0;"/>'+
+																				'<td style="border-top: 2px solid; padding: 0;"/>'+
+																				'<td style="border-top: 2px solid; padding: 0;"/>'+
+																				'<td style="border-top: 2px solid; padding: 0;"/>'+
+																			'</tr>');
+						}
+                        var vno = data.feed.entry[i]['gsx$vehicleno']['$t'];
+                        var income = data.feed.entry[i]['gsx$income']['$t'];
+                        var remark = data.feed.entry[i]['gsx$remark']['$t'];
+                        var cost = data.feed.entry[i]['gsx$expendature']['$t'];
+                        document.getElementById('demo-all').innerHTML += ('<tr>'+
+																		'<td>'+vno+'</td>'+
+																		'<td>'+income+'</td>'+
+																		'<td>'+remark+'</td>'+
+																		'<td>'+cost+'</td>'+
+																	'</tr>');
+                    }
+					
+					//All data
+                    for (i = sheetData.length-10; i < sheetData.length; i++) {
+                        var vno = data.feed.entry[i]['gsx$vehicleno']['$t'];
+                        var income = data.feed.entry[i]['gsx$income']['$t'];
+                        var remark = data.feed.entry[i]['gsx$remark']['$t'];
+                        var cost = data.feed.entry[i]['gsx$expendature']['$t'];
+                        document.getElementById('demo').innerHTML += ('<tr>'+
+																		'<td>'+vno+'</td>'+
+																		'<td>'+income+'</td>'+
+																		'<td>'+remark+'</td>'+
+																		'<td>'+cost+'</td>'+
+																	'</tr>');
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
